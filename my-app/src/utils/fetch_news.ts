@@ -67,3 +67,16 @@ function extractParagraphs(htmlString : string) : string {
     return html
 }
 
+export function parseParagraphs(htmlString : string) : string[] {
+    const pElements = htmlString.match(/<\s*p[^>]*>(.*?)<\/p>/g)
+
+    //No paragraph were found in the html string
+    if(!pElements) return []
+
+    //Remove all HTML tags including p
+    const paragraphs = pElements.map((pElement) => 
+        pElement.replace( /(<([^>]+)>)/ig, '')
+    )
+    return paragraphs
+}
+

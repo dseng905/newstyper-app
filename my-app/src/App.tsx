@@ -3,7 +3,8 @@ import './App.css';
 import styled from 'styled-components'
 import FrontPage from './pages/FrontPage'
 import ArticlePage from './pages/ArticlePage'
-import TestPage from './pages/TestPage'
+import TestPage from './pages/ArticleTypingPage'
+import LoadingPage from './pages/LoadingPage'
 import Header from './components/Header'
 import {
   BrowserRouter as Router,
@@ -15,10 +16,8 @@ const App : React.FC = () => {
   return (
     <Router>
       <Root>
-        <Header />
         <Switch>
           <Route exact path="/" children={<FrontPage/>} />
-          <Route path="/test" children={<TestPage />} />
           <Route path="/article/:id+" children={<ArticlePage />} />
         </Switch>
       </Root>

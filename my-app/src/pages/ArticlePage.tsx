@@ -1,54 +1,42 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import ArticleTypingPage from './ArticleTypingPage'
+import LoadingPage from './LoadingPage'
 import ClockLoader from 'react-spinners/ClockLoader'
 import { useParams } from 'react-router-dom'
-import { fetchArticle } from '../utils/fetch_news'
-
+import { fetchArticle, parseParagraphs } from '../utils/fetch_news'
 
 const ArticlePage : React.FC = () => {
   const { id } = useParams()
-  const [article, setArticle] = useState<NewsInfo | undefined>(undefined)
+  const [paragraphs, setParagraphs] = useState<string[]>([])
+  const [article, setArticle] = useState<NewsInfo | null>(null)
 
   useEffect(() => {
-    async function getArticle() {
-      const result = await fetchArticle(id)
-      setArticle(result)
+    async function parseArticle() {
+      const article = await fetchArticle(id)
+      setParagraphs(parseParagraphs(article.article))
+      setArticle(article)
     }
-    getArticle()
+    parseArticle()
   }, [id])
 
   return (
-    <div> {
-      !article
-      ? <ClockLoader size={150} color={"gray"}/>
-      : <ArticleContainer>
-          <h1>{article.title}</h1>
-          <h3>{article.date.toString()}</h3>
-          <ImageContainer>
-            <img src={article.thumbnail} />
-          </ImageContainer>
-          <h2>{article.description}</h2>
-          <div dangerouslySetInnerHTML={{ __html: article.article }} />
-        </ArticleContainer>
-    } </div>
+    <div>
+      {
+        !article
+        ? <LoadingPage />
+        : <ArticleTypingPage 
+            paragraphs={paragraphs}
+            title={article.title}
+            description={article.description}
+            image={article.thumbnail!}
+            date={article.date}
+          />
+      }
+    </div>
   )
+
 }
 
-
-const ArticleContainer = styled.div`
-  margin: 0 20%;
-`
-
-const ImageContainer = styled.div`
-  width: 100%;
-  height: auto;
-  padding: 0 5%;
-  box-sizing: border-box;
-
-  & img {
-    width: 100%;
-    height: auto;
-  }
-`
 
 export default ArticlePage

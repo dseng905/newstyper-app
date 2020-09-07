@@ -15,9 +15,9 @@ const Header : React.FC = () => {
         }}
       >
         <Link to="/" style={{textDecoration: "none", color : "white"}}>
-          <p style={{fontFamily: "'Abril Fatface', cursive",fontSize: "50px", margin: "0"}}>The Newsletter</p>
+          <p style={{fontFamily: "'Abril Fatface', cursive",fontSize: "50px", margin: "0"}}>NewsTyper</p>
         </Link>
-        <p style={{fontSize: "20px", margin: "10px 0 10px 0"}}>The World's Finest News Source</p>
+        <p style={{fontSize: "15px", margin: "10px 0 10px 0"}}>Type Your Way to the Truth.</p>
       </div>
       <div
         className="news-navigator"

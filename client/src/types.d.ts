@@ -8,4 +8,3 @@ interface NewsInfo {
     url : string
 }
 
-type CSSStyles = {[key : string] : React.CSSProperties}

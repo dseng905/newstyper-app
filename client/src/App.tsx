@@ -3,9 +3,9 @@ import './App.css';
 import styled from 'styled-components'
 import FrontPage from './pages/FrontPage'
 import ArticlePage from './pages/ArticlePage'
-import TestPage from './pages/ArticleTypingPage'
-import LoadingPage from './pages/LoadingPage'
-import Header from './components/Header'
+import SignInPage from './pages/SignInPage'
+import CreateAccountPage from './pages/CreateAccountPage'
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -19,6 +19,8 @@ const App : React.FC = () => {
         <Switch>
           <Route exact path="/" children={<FrontPage/>} />
           <Route path="/article/:id+" children={<ArticlePage />} />
+          <Route path="/signin" children={<SignInPage />} />
+          <Route path="/create_account" children={<CreateAccountPage />} />
         </Switch>
       </Root>
     </Router>

@@ -4,9 +4,9 @@ import styled, {keyframes} from 'styled-components'
 
 interface TestInput {
   title : string
-  image : string
-  description : string 
-  date : Date
+  image? : string
+  description? : string 
+  date? : Date
   paragraphs : string[]
 }
 
@@ -26,8 +26,6 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
   const [charCountCompleted, setCharCountCompleted] = useState(0)
   const [timerSeconds, setTimerSeconds] = useState(0)
 
-  const [hasStarted, setHasStarted] = useState(false)
-
   const paragraphRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -44,7 +42,7 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
   return (
     <div style={{ margin: "0 25%"}}>
       <h1>{props.title}</h1>
-      <h3>{props.date.toString()}</h3>
+      <h3>{props.date?.toString() ?? ""}</h3>
       <ImageContainer>
         <img src={props.image}/>
       </ImageContainer>
@@ -63,7 +61,7 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
         <UnhighlightedText >{unhighlighted}</UnhighlightedText>
       </p>
       <UserInput 
-        placeholder="Type text here..."
+        placeholder={currentWord}
         onChange={onInputChange}
         value={inputText}
         autoFocus

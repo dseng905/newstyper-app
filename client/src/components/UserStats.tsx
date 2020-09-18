@@ -3,8 +3,8 @@ import styled from 'styled-components'
 
 interface UserStatsInfo {
   title : string
-  displayNumber : number
-  maxDisplayNumber? : number
+  displayNumber : number | string
+  maxDisplayNumber? : number | string
   unit : string
 }
 
@@ -25,11 +25,12 @@ const UserStats : React.FC<UserStatsInfo> = (props) => {
 }
 
 const StatsContainer = styled.div`
-  width: 300px;
+  width: 250px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  box-sizing: border-box;
 `
 
 const StatsTitle = styled.h3`
@@ -42,7 +43,7 @@ const StatsTitle = styled.h3`
 const StatsNumberDisplay = styled.div`
   display: flex;
   align-items: baseline;
-  margin: 20px;
+  margin: 20px 0;
 `
 
 const StatsNumber = styled.div`

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import styled from 'styled-components'
 import ArticleTypingPage from './ArticleTypingPage'
 import LoadingPage from './LoadingPage'
-import ClockLoader from 'react-spinners/ClockLoader'
 import { useParams } from 'react-router-dom'
 import { fetchArticle, parseParagraphs } from '../utils/fetch_news'
 
@@ -20,8 +18,15 @@ const ArticlePage : React.FC = () => {
     parseArticle()
   }, [id])
 
+
+  const testPage = <ArticleTypingPage
+    paragraphs={["A quick brown fox jumps over the lazy"]}
+    title={"Lorem Ipsum"}
+  />
+  
+
   return (
-    <div>
+    <div style={{width: "100%"}}>
       {
         !article
         ? <LoadingPage />

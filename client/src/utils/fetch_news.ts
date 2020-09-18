@@ -14,7 +14,7 @@ export enum NewsSection {
 }
 
 
-export async function fetchNews(section : NewsSection, showBody : boolean = false) : Promise<NewsInfo[]>{
+export async function fetchNews(section : NewsSection) : Promise<NewsInfo[]>{
     const uri = `${baseUrl}/search?api-key=${apiKey}&section=${section}&show-fields=body,thumbnail,headline,trailText`
 
     const res = await fetch(uri)
@@ -75,8 +75,11 @@ export function parseParagraphs(htmlString : string) : string[] {
 
     //Remove all HTML tags including p
     const paragraphs = pElements.map((pElement) => 
-        pElement.replace( /(<([^>]+)>)/ig, '')
+        pElement
+            .replace( /(<([^>]+)>)/ig, '')
+            .trim()
     )
+    
     return paragraphs
 }
 

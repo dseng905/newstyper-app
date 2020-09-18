@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
-import styled, {keyframes} from 'styled-components'
+import styled from 'styled-components'
+import parseToDateString from '../utils/parse_date'
+import TypingResults from '../components/TypingResults'
 
 
 interface TestInput {
@@ -25,24 +27,28 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
 
   const [charCountCompleted, setCharCountCompleted] = useState(0)
   const [timerSeconds, setTimerSeconds] = useState(0)
+  const [articleCompleted, setArticleCompleted] = useState(false)
+  const [startTimer, setStartTimer] = useState(false)
 
   const paragraphRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const updateTime = setInterval(() => {
-      setTimerSeconds((seconds) => seconds + 1)
-    }, 1000)
-    
-
     const ref = paragraphRef!.current!
     window.scrollTo(0, ref.offsetTop - 50)
+    if(!articleCompleted && startTimer) {
+      const timer = setInterval(() => {
+        setTimerSeconds((seconds) => seconds + 1)
+      }, 1000)
 
-  }, [])
+      return () => clearInterval(timer)
+    } 
+  }, [articleCompleted, startTimer])
 
+  const articleDate = parseToDateString(props.date ?? Date.now())
   return (
-    <div style={{ margin: "0 25%"}}>
+    <div style={{ margin: "0 25%", boxSizing: "border-box"}}>
       <h1>{props.title}</h1>
-      <h3>{props.date?.toString() ?? ""}</h3>
+      <h3>{articleDate}</h3>
       <ImageContainer>
         <img src={props.image}/>
       </ImageContainer>
@@ -60,21 +66,33 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
         <ErrorText>{errorText}</ErrorText>
         <UnhighlightedText >{unhighlighted}</UnhighlightedText>
       </p>
-      <UserInput 
-        placeholder={currentWord}
-        onChange={onInputChange}
-        value={inputText}
-        autoFocus
-      />
-      <ProgressInfo>
-        <div>{calculateWPM() + " WPM"}</div>
-        <div>{getTimerString()}</div>
-        <div>{`Paragraph ${paragraphIndex+1}/${paragraphs.length}`}</div>        
-      </ProgressInfo>
+      { 
+        !articleCompleted &&
+        (<div>
+          <UserInput 
+            placeholder={startTimer ? currentWord : "Type to start now..."}
+            onChange={onInputChange}
+            value={inputText}
+            autoFocus
+          />
+          <ProgressInfo>
+            <div>{calculateWPM() + " WPM"}</div>
+            <div>{getTimerString()}</div>
+            <div>{`Paragraph ${paragraphIndex+1}/${paragraphs.length}`}</div>        
+          </ProgressInfo>
+        </div>)
+      }
       { //Show remaining paragraphs
         paragraphs.slice(paragraphIndex+1, paragraphs.length).map((paragraph) => (
           <NextParagraph>{paragraph}</NextParagraph>
         ))
+      }
+      {
+        articleCompleted && 
+        <TypingResults 
+          wpm={calculateWPM()} 
+          time={timerSeconds}
+        />
       }
       <div style={{height: '100vh'}}></div>
     </div>
@@ -99,13 +117,29 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
   function onInputChange(e : React.ChangeEvent<HTMLInputElement>) {
     const input = e.currentTarget.value
     const parsedWord = parseQuotationMarks(currentWord)
+    console.log(paragraphIndex);
+
+    if(!startTimer) {
+      setStartTimer(true)
+    }
 
     //Check if the input completed the entire word correctly
     if(input === parsedWord + " ") {
       const text = highlighted + parsedWord + " "
       const endOfParagraph = (text.length > paragraphs[paragraphIndex].length)
-      if(endOfParagraph) goToNextParagraph()
-      else goToNextWord(input)
+      if(endOfParagraph && paragraphIndex === paragraphs.length-1) {
+        setArticleCompleted(true)
+        setCurrentText("")
+        setCurrentWord("")
+        setInputText("")
+        setHighlighted((prev) => prev + input)
+      }
+      else if(endOfParagraph) {
+        goToNextParagraph()
+      }
+      else {
+        goToNextWord(input)
+      }
     } 
     else {
       highlightAndCheckForErrors(input, parsedWord)
@@ -122,6 +156,7 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
   function goToNextParagraph() {
     const nextParagraph = paragraphs[paragraphIndex+1]
     const newWordList = nextParagraph.split(" ")
+
 
     //Clear state variables and set to new paragraph
     setParagraphIndex((prev) => prev + 1)

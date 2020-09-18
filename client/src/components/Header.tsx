@@ -1,15 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import parseToDateString from '../utils/parse_date'
 
 const Header : React.FC = () => {
-  const currentDate = (new Date(Date.now()))
-  .toLocaleDateString(undefined, {
-    weekday : 'long',
-    year : 'numeric',
-    month : 'long',
-    day : 'numeric'
-  })
+  const currentDate = parseToDateString(Date.now())
 
   return (
     <div style={{ width: "100%" }}>

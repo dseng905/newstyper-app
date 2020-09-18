@@ -8,13 +8,6 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const FrontPage : React.FC = () => {
-  const currentDate = (new Date(Date.now()))
-    .toLocaleDateString(undefined, {
-      weekday : 'long',
-      year : 'numeric',
-      month : 'long',
-      day : 'numeric'
-    })
     
   return (
     <div style={{width: "100%"}}>

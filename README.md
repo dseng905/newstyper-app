@@ -5,4 +5,5 @@ NewsTyper is a web app where you can practice your typing skills by typing news 
 
 ## Technologies to Be Used
 **Front-end**: TypeScript, React.js, React Hooks, React Router, styled-components
+
 **Back-end**: Node.js, Express.js, PostgresSQL

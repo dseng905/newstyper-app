@@ -21,7 +21,8 @@ const Input = styled.input`
   font-size: 17px;
 `
 export const TextInput = styled(Input).attrs({type : 'text'})``
-export const PasswordInput = styled(Input).attrs({type : 'password'})``
+export const PasswordInput = styled(Input).attrs({type : 'password', name: 'password'})``
+export const EmailInput = styled(Input).attrs({type : 'email', name: 'email'})``
 
 export const SubmitButton = styled.button`
   font-family: inherit;

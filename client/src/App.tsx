@@ -5,6 +5,7 @@ import FrontPage from './pages/FrontPage'
 import ArticlePage from './pages/ArticlePage'
 import SignInPage from './pages/SignInPage'
 import CreateAccountPage from './pages/CreateAccountPage'
+import Test from './pages/Test'
 
 import {
   BrowserRouter as Router,
@@ -21,6 +22,7 @@ const App : React.FC = () => {
           <Route path="/article/:id+" children={<ArticlePage />} />
           <Route path="/signin" children={<SignInPage />} />
           <Route path="/create_account" children={<CreateAccountPage />} />
+          <Route path="/test" children={ <Test />} />
         </Switch>
       </Root>
     </Router>

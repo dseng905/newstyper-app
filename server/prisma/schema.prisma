@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ArticleTypingResult {
+  id            Int         @default(autoincrement()) @id
+  userId        Int         @default(autoincrement()) @map("user_id")
+  articleId     String?     @map("article_id")
+  wpm           Int?
+  timeCompleted Int?        @map("time_completed")
+  userProfile   UserProfile @relation(fields: [userId], references: [id])
+
+  @@map("article_typing_results")
+}
+
+model SaveArticle {
+  id          Int         @default(autoincrement()) @id
+  userId      Int         @default(autoincrement()) @map("user_id")
+  articleId   String?     @map("article_id")
+  userProfile UserProfile @relation(fields: [userId], references: [id])
+
+  @@map("saved_articles")
+}
+
+model UserProfile {
+  id                   Int                   @default(autoincrement()) @id
+  email                String?               @unique
+  password             String?
+  firstName            String?               @map("first_name")
+  lastName             String?               @map("last_name")
+  articleTypingResults ArticleTypingResult[]
+  savedArticles        SaveArticle[]
+  userStatistics       UserStatistics?
+
+  @@map("user_profiles")
+}
+
+model UserStatistics {
+  id                         Int         @default(autoincrement()) @id
+  userId                     Int         @default(autoincrement()) @map("user_id") @unique
+  averageWpm                 Int?        @map("average_wpm")
+  totalArticlesCompleted     Int?        @map("total_articles_completed")
+  dailyGoal                  Int?        @map("daily_goal")
+  dailyGoalArticlesCompleted Int?        @map("daily_goal_articles_completed")
+  userProfile                UserProfile @relation(fields: [userId], references: [id])
+
+  @@map("user_statistics")
+}

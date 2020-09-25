@@ -13,9 +13,9 @@ interface TestInput {
 }
 
 const ArticleTypingPage : React.FC<TestInput> = (props) => {
-  const [paragraphs, setParagraphs] = useState<string[]>(props.paragraphs)
+  const [paragraphs] = useState(props.paragraphs)
   const [paragraphIndex, setParagraphIndex] = useState(0)
-  const [wordList, setWordList] = useState<string[]>(props.paragraphs[0].split(" "))
+  const [wordList, setWordList] = useState(props.paragraphs[0].split(" "))
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [currentWord, setCurrentWord] = useState(props.paragraphs[0].split(" ")[0])
 

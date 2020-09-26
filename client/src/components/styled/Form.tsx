@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const Container = styled.div`
+export const Container = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -24,7 +24,7 @@ export const TextInput = styled(Input).attrs({type : 'text'})``
 export const PasswordInput = styled(Input).attrs({type : 'password', name: 'password'})``
 export const EmailInput = styled(Input).attrs({type : 'email', name: 'email'})``
 
-export const SubmitButton = styled.button`
+export const SubmitButton = styled.button.attrs({type : 'submit'})`
   font-family: inherit;
   width: 100%;
   margin-top: 20px;

@@ -1,16 +1,25 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import parseToDateString from '../utils/parse_date'
+import UserContext from './contexts/UserContext'
+import Cookies from 'js-cookie'
+
 
 const Header : React.FC = () => {
   const currentDate = parseToDateString(Date.now())
+  const [userContext, setUserContext] = useContext(UserContext)
 
   return (
     <div style={{ width: "100%" }}>
       <UserAccountActions>
-        <UserAccountActionLink to="/create_account">Register</UserAccountActionLink>
-        <UserAccountActionLink to="/signin">Sign in</UserAccountActionLink>
+        { userContext.signedIn
+          ? <UserAccountActionButton onClick={signOut}>Sign Out</UserAccountActionButton>
+          : (<div>
+              <UserAccountActionLink to="/create_account">Register</UserAccountActionLink>
+              <UserAccountActionLink to="/signin">Sign in</UserAccountActionLink>
+            </div>)
+        } 
       </UserAccountActions>
       <TitleContainer>
         <TitleLink to="/">NewsTyper</TitleLink>
@@ -21,6 +30,12 @@ const Header : React.FC = () => {
       </Navigator>
     </div>
   )
+
+  function signOut(e : React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    Cookies.remove('token')
+    Cookies.remove('userId')
+    setUserContext({signedIn : false})
+  }
 }
 
 /* Styled Components */
@@ -39,6 +54,15 @@ const UserAccountActionLink = styled(Link)`
   color: white;
   font-size: 15px;
   margin: 0 10px;
+`
+
+const UserAccountActionButton = styled.button`
+  text-decoration: none;
+  border: none;
+  background-color: transparent;
+  font-size: 15px;
+  color: white;
+  font-family: inherit;
 `
 
 const TitleContainer = styled.div`

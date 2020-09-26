@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import * as Form from '../components/styled/Form'
 import Page from '../components/styled/Page'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import NewsTyperApi from '../utils/newstyper_api'
 import setJwtToCookie from '../utils/set_jwt_to_cookie'
+import UserContext from '../components/contexts/UserContext'
 
 type InputEvent = React.ChangeEvent<HTMLInputElement>
-type ButtonClickEvent = React.MouseEvent<HTMLButtonElement, MouseEvent>
-
-
+type SubmitEvent = React.FormEvent<HTMLFormElement>
 
 const CreateAccountPage : React.FC = () => {
   const [firstName, setFirstName] = useState("")
@@ -19,11 +18,12 @@ const CreateAccountPage : React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showError, setShowError] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
+  const [, setUserContext] = useContext(UserContext)
   const history = useHistory()
 
   return (
     <Page>
-      <Form.Container>
+      <Form.Container onSubmit={onSubmit}>
         <Form.Title>Create an Account.</Form.Title>
         { showError &&
           <ErrorMessage>{errorMessage}</ErrorMessage>
@@ -51,12 +51,12 @@ const CreateAccountPage : React.FC = () => {
           value={confirmPassword}
           onChange={(e: InputEvent) => setConfirmPassword(e.currentTarget.value)} 
         />
-        <Form.SubmitButton onClick={onClick}>Create Account</Form.SubmitButton>
+        <Form.SubmitButton>Create Account</Form.SubmitButton>
       </Form.Container>
     </Page>
   )
 
-  async function onClick(e: ButtonClickEvent) {
+  async function onSubmit(e: SubmitEvent) {
     const checkFields = checkWhichFieldsAreEmpty()
     if(checkFields.fieldsAreEmpty) {
       setErrorMessage(checkFields.error)
@@ -79,8 +79,9 @@ const CreateAccountPage : React.FC = () => {
       setErrorMessage(res.error!)
       setShowError(true)
     } else {
-      const { userId, token, expiresIn } = res
-      setJwtToCookie(userId!, token!, expiresIn!)
+      const { userId, token, expiresIn, firstName, lastName } = res
+      setJwtToCookie(userId!.toString(), token!, expiresIn!)
+      setUserContext({signedIn : true, firstName, lastName, userId})
       history.push("/")
     }
 

@@ -14,10 +14,13 @@ export interface SignInInfo {
 
 export interface UserProfileResponse {
     token? : string
-    userId? : string
+    userId? : number
     expiresIn? : number
     error? : string
     success? : string
+    firstName? : string
+    lastName? : string
+    email? : string
 }
 
 export interface UserStatisticsResponse {
@@ -85,16 +88,21 @@ abstract class NewsTyperApi {
         }).then(res => res.json()) as UserStatisticsResponse
     }
 
-    static async getUserProfile() : Promise<UserProfileResponse> {
+    static async getUserProfile() : Promise<UserProfileResponse | undefined> {
         const token = Cookies.get('token')
-        return await fetch(URI + '/', {
+        const res = await fetch(URI + '/', {
             method: "GET",
             credentials: 'include',
             headers: {
                 'Authorization' : 'Bearer ' + token ?? '',
                 'Content-Type' : 'application/json'
             }
-        }).then(res => res.json()) as UserProfileResponse
+        })
+
+        if(res.status === 401) return undefined
+        
+        const user = await res.json()
+        return user as UserProfileResponse   
     }
 }
 

@@ -95,12 +95,15 @@ export async function signInToUserProfile(req : Request, res : Response) {
         }
 
         const token = getSignedJwtToken(user.id)
-
+        const { id: userId, firstName, lastName } = user
         res.status(200).json({
             success : "User has been successfully signed in.",
             token,
             expiresIn : jwtConfig.EXPIRES_IN,
-            userId : user.id
+            userId,
+            firstName,
+            lastName,
+            email
         })
     }
     catch(e) {

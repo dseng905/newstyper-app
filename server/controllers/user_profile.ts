@@ -3,12 +3,10 @@ import { PrismaClient } from '@prisma/client'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import validator from 'validator'
+import jwtConfig from '../auth/passport_config'
 
 
 const prisma = new PrismaClient()
-const JWT_EXPIRES_IN = 86400
-const JWT_SECRET_KEY = '10801566a'
-
 
 interface CreateUserBody {
     email : string
@@ -24,8 +22,8 @@ interface SignInBody {
 
 
 function getSignedJwtToken(userId : number) {
-    return jwt.sign({ userId }, '10801566a', {
-        expiresIn: 86400,
+    return jwt.sign({ userId }, jwtConfig.SECRET_KEY, {
+        expiresIn: jwtConfig.EXPIRES_IN,
     })
 }
 
@@ -70,7 +68,7 @@ export async function createUserProfile(req : Request, res : Response) {
         res.status(200).json({
             success: "User profile has been successfully created.", 
             token,
-            expiresIn : JWT_EXPIRES_IN,
+            expiresIn : jwtConfig.EXPIRES_IN,
             userId : user.id
         })
     }
@@ -101,7 +99,7 @@ export async function signInToUserProfile(req : Request, res : Response) {
         res.status(200).json({
             success : "User has been successfully signed in.",
             token,
-            expiresIn : JWT_EXPIRES_IN,
+            expiresIn : jwtConfig.EXPIRES_IN,
             userId : user.id
         })
     }
@@ -117,7 +115,7 @@ export async function getUserProfileStatistics(req : Request, res : Response) {
         if(!req.user) {
             return res.send({error : "Failed to authenticate."})
         }
-        
+
         const { userId } = req.user as { userId : number }
         const user = await prisma.userProfile.findOne({
             where: {id : userId}, 
@@ -142,6 +140,36 @@ export async function getUserProfileStatistics(req : Request, res : Response) {
             }
         })
         res.send(userStatistics)
+    }
+    catch(e) {
+        const error = e as Error
+        res.send({error: error.message})
+    }
+}
+
+export async function getUserProfile(req : Request, res : Response) {
+    try {
+        if(!req.user) {
+            return res.send({error : "Failed to authenticate."})
+        }
+
+        const { userId : id } = req.user as { userId : number }
+        const user = await prisma.userProfile.findOne({
+            where : { id },
+            select : {
+                id : true, 
+                email : true,
+                firstName : true,
+                lastName : true,
+                userStatistics : true,
+            }
+        })
+
+        if(!user) {
+            return res.send({error : "User does not exist."})
+        } else {
+            return res.send(user)
+        }
     }
     catch(e) {
         const error = e as Error

@@ -8,7 +8,13 @@ import '../auth/auth'
 const userProfileRouter = express.Router()
 
 userProfileRouter.route('/')
-    .get(passport.authenticate('jwt', {session : false}), UserProfile.getUserProfileStatistics)
+    .get(passport.authenticate('jwt', {session : false}), UserProfile.getUserProfile)
+
+
+userProfileRouter.get('/statistics', 
+    passport.authenticate('jwt', {session : false}), 
+    UserProfile.getUserProfileStatistics
+)
 
 userProfileRouter.post('/create', UserProfile.createUserProfile)
 

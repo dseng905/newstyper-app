@@ -29,7 +29,8 @@ var passport_1 = __importDefault(require("passport"));
 require("../auth/auth");
 var userProfileRouter = express_1.default.Router();
 userProfileRouter.route('/')
-    .get(passport_1.default.authenticate('jwt', { session: false }), UserProfile.getUserProfileStatistics);
+    .get(passport_1.default.authenticate('jwt', { session: false }), UserProfile.getUserProfile);
+userProfileRouter.get('/statistics', passport_1.default.authenticate('jwt', { session: false }), UserProfile.getUserProfileStatistics);
 userProfileRouter.post('/create', UserProfile.createUserProfile);
 userProfileRouter.post('/signin', UserProfile.signInToUserProfile);
 userProfileRouter.post('/signout', UserProfile.signOutOfUserProfile);

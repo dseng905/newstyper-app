@@ -22,13 +22,18 @@ export interface UserProfileResponse {
 
 export interface UserStatisticsResponse {
     userId? : number
-    email? : string
-    firstName? : string
-    lastName? : string
     averageWpm? : number
     dailyGoal? : number
     dailyGoalArticlesCompleted? : number,
     totalArticlesCompleted? : number
+}
+
+export interface UserProfileResponse {
+    id? : number
+    email? : string
+    firstName? : string
+    lastName? : string
+    userProfile : UserStatisticsResponse
 }
   
 
@@ -70,7 +75,7 @@ abstract class NewsTyperApi {
 
     static async getUserStatistics() : Promise<UserStatisticsResponse>{
         const token = Cookies.get('token')
-        return await fetch(URI + '/', {
+        return await fetch(URI + '/statistics', {
             method: "GET",
             credentials: 'include',
             headers: {
@@ -78,6 +83,18 @@ abstract class NewsTyperApi {
                 'Content-Type' : 'application/json'
             }
         }).then(res => res.json()) as UserStatisticsResponse
+    }
+
+    static async getUserProfile() : Promise<UserProfileResponse> {
+        const token = Cookies.get('token')
+        return await fetch(URI + '/', {
+            method: "GET",
+            credentials: 'include',
+            headers: {
+                'Authorization' : 'Bearer ' + token ?? '',
+                'Content-Type' : 'application/json'
+            }
+        }).then(res => res.json()) as UserProfileResponse
     }
 }
 

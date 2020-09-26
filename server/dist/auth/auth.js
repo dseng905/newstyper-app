@@ -35,15 +35,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var passport_jwt_1 = require("passport-jwt");
-var client_1 = require("@prisma/client");
-var prisma = new client_1.PrismaClient();
+var passport_config_1 = __importDefault(require("./passport_config"));
 function applyJwtStrategy(passport) {
     var _this = this;
     var options = {
         jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: '10801566a'
+        secretOrKey: passport_config_1.default.SECRET_KEY
     };
     passport.use('jwt', new passport_jwt_1.Strategy(options, function (payload, done) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {

@@ -1,13 +1,11 @@
 import { PassportStatic } from 'passport'
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-jwt'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import jwtConfig from './passport_config'
 
 function applyJwtStrategy(passport : PassportStatic) {
     const options : StrategyOptions = {
         jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey : '10801566a'
+        secretOrKey : jwtConfig.SECRET_KEY
     }
 
     passport.use('jwt', new JwtStrategy(options, async (payload, done) => {

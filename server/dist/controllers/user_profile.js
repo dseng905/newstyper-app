@@ -39,17 +39,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signOutOfUserProfile = exports.getUserProfileStatistics = exports.signInToUserProfile = exports.createUserProfile = void 0;
+exports.signOutOfUserProfile = exports.getUserProfile = exports.getUserProfileStatistics = exports.signInToUserProfile = exports.createUserProfile = void 0;
 var client_1 = require("@prisma/client");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var validator_1 = __importDefault(require("validator"));
+var passport_config_1 = __importDefault(require("../auth/passport_config"));
 var prisma = new client_1.PrismaClient();
-var JWT_EXPIRES_IN = 86400;
-var JWT_SECRET_KEY = '10801566a';
 function getSignedJwtToken(userId) {
-    return jsonwebtoken_1.default.sign({ userId: userId }, '10801566a', {
-        expiresIn: 86400,
+    return jsonwebtoken_1.default.sign({ userId: userId }, passport_config_1.default.SECRET_KEY, {
+        expiresIn: passport_config_1.default.EXPIRES_IN,
     });
 }
 function createUserProfile(req, res) {
@@ -93,7 +92,7 @@ function createUserProfile(req, res) {
                     res.status(200).json({
                         success: "User profile has been successfully created.",
                         token: token,
-                        expiresIn: JWT_EXPIRES_IN,
+                        expiresIn: passport_config_1.default.EXPIRES_IN,
                         userId: user.id
                     });
                     return [3 /*break*/, 5];
@@ -134,7 +133,7 @@ function signInToUserProfile(req, res) {
                     res.status(200).json({
                         success: "User has been successfully signed in.",
                         token: token,
-                        expiresIn: JWT_EXPIRES_IN,
+                        expiresIn: passport_config_1.default.EXPIRES_IN,
                         userId: user.id
                     });
                     return [3 /*break*/, 4];
@@ -196,6 +195,47 @@ function getUserProfileStatistics(req, res) {
     });
 }
 exports.getUserProfileStatistics = getUserProfileStatistics;
+function getUserProfile(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var id, user, e_4, error;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    if (!req.user) {
+                        return [2 /*return*/, res.send({ error: "Failed to authenticate." })];
+                    }
+                    id = req.user.userId;
+                    return [4 /*yield*/, prisma.userProfile.findOne({
+                            where: { id: id },
+                            select: {
+                                id: true,
+                                email: true,
+                                firstName: true,
+                                lastName: true,
+                                userStatistics: true,
+                            }
+                        })];
+                case 1:
+                    user = _a.sent();
+                    if (!user) {
+                        return [2 /*return*/, res.send({ error: "User does not exist." })];
+                    }
+                    else {
+                        return [2 /*return*/, res.send(user)];
+                    }
+                    return [3 /*break*/, 3];
+                case 2:
+                    e_4 = _a.sent();
+                    error = e_4;
+                    res.send({ error: error.message });
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getUserProfile = getUserProfile;
 function signOutOfUserProfile(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

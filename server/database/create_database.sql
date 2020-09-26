@@ -2,7 +2,7 @@ CREATE DATABASE newstyper;
 
 CREATE TABLE user_profiles(
     id SERIAL PRIMARY KEY,
-    email VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     password VARCHAR(255),
     first_name VARCHAR(255),
     last_name VARCHAR(255)
@@ -24,7 +24,7 @@ CREATE TABLE saved_articles(
 
 CREATE TABLE user_statistics(
     id SERIAL PRIMARY KEY,
-    user_id SERIAL REFERENCES user_profiles(id),
+    user_id SERIAL REFERENCES user_profiles(id) UNIQUE,
     average_wpm INT,
     total_articles_completed INT,
     daily_goal INT,

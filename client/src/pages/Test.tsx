@@ -5,7 +5,7 @@ const Test : React.FC = () => {
 
   useEffect(() => {
     async function printUserStatistics() {
-      const stats = await NewsTyperApi.getUserStatistics()
+      const stats = await NewsTyperApi.getUserProfile()
       console.log(stats)
     }
     printUserStatistics()

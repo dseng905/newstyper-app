@@ -13,4 +13,10 @@ Keep in mind that some features such as the user account system currently do not
 
 ## Images
 ### Front Page
-<img src="https://i.imgur.com/FHIZAy6.png" width="300" >
+<img src="https://i.imgur.com/FHIZAy6.png" width="500" >
+
+### Article Typing Example
+<img src="https://i.imgur.com/69z0hjA.png" width="500" >
+
+## User Registration
+<img src="https://i.imgur.com/lUEf3TS.png" width="500" >

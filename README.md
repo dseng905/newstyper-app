@@ -6,7 +6,7 @@ NewsTyper is a web app where you can practice your typing skills by typing news 
 ## Technologies (to Be) Used
 **Front-end**: TypeScript, React.js, React Hooks, React Router, styled-components
 
-**Back-end**: Node.js, Express.js, PostgresSQL
+**Back-end**: Node.js, Express.js, PostgresSQL, Prisma, passport.js, jwt
 
-A prototype of the web app is shown here: https://newstyper.netlify.app/.
+A prototype of the web app can found be in this link here: https://newstyper.netlify.app/.
 Keep in mind that some features such as the user account system currently do not work and are only placeholders.

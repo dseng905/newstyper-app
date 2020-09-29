@@ -10,3 +10,7 @@ NewsTyper is a web app where you can practice your typing skills by typing news 
 
 A prototype of the web app can found be in this link here: https://newstyper.netlify.app/.
 Keep in mind that some features such as the user account system currently do not work and are only placeholders.
+
+## Images
+### Front Page
+<img src="https://i.imgur.com/FHIZAy6.png" width="300" >

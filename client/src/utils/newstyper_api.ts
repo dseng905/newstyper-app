@@ -38,9 +38,22 @@ export interface UserProfileResponse {
     lastName? : string
     userProfile : UserStatisticsResponse
 }
+
+export interface ArticleTypingResult {
+    userId? : number
+    articleId : string
+    id? : number
+    timeCompleted : number
+    wpm : number
+}
+
+export interface ArticleTypingResultsResponse {
+    articleTypingResults? : ArticleTypingResult[]
+    success? : string
+}
   
 
-const headers = {
+const postHeaders = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
 }
@@ -60,7 +73,7 @@ abstract class NewsTyperApi {
             method: "POST",
             credentials: 'include',
             body,
-            headers,
+            headers : postHeaders,
         }).then(res => res.json()) as UserProfileResponse
     }
 
@@ -72,20 +85,23 @@ abstract class NewsTyperApi {
             method: "POST",
             credentials: 'include',
             body,
-            headers
+            headers : postHeaders,
         }).then(res => res.json()) as UserProfileResponse
     }
 
-    static async getUserStatistics() : Promise<UserStatisticsResponse>{
+    static async getUserStatistics() : Promise<UserStatisticsResponse | undefined>{
         const token = Cookies.get('token')
-        return await fetch(URI + '/statistics', {
+        const res = await fetch(URI + '/statistics', {
             method: "GET",
             credentials: 'include',
             headers: {
                 'Authorization' : 'Bearer ' + token ?? '',
                 'Content-Type' : 'application/json'
             }
-        }).then(res => res.json()) as UserStatisticsResponse
+        })
+
+        if(res.status === 401) return undefined
+        else return (await res.json()) as UserStatisticsResponse
     }
 
     static async getUserProfile() : Promise<UserProfileResponse | undefined> {
@@ -103,6 +119,38 @@ abstract class NewsTyperApi {
         
         const user = await res.json()
         return user as UserProfileResponse   
+    }
+
+    static async getArticleTypingResults() : Promise<ArticleTypingResult[] | undefined> {
+        const token = Cookies.get('token')
+        const res = await fetch(URI + "/article/results", {
+            method : "GET",
+            credentials : 'include',
+            headers : {
+                'Authorization' : 'Bearer ' + token ?? '',
+                'Content-Type' : 'application/json'
+            }
+        })
+
+        if(res.status === 401) return undefined
+        const response = await res.json() as ArticleTypingResultsResponse
+        return response.articleTypingResults
+    }
+
+    static async saveArticleTypingResults(results : ArticleTypingResult) : Promise<void> {
+        const token = Cookies.get('token')
+        const res = await fetch(URI + "/article/results", {
+            method: "POST",
+            credentials : 'include',
+            body : JSON.stringify(results),
+            headers : {
+                ...postHeaders,
+                'Authorization' : 'Bearer ' + token ?? '',
+            }
+        })
+
+        if(res.status === 401) return
+        console.log(await res.json())
     }
 }
 

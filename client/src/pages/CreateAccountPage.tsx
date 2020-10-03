@@ -57,6 +57,7 @@ const CreateAccountPage : React.FC = () => {
   )
 
   async function onSubmit(e: SubmitEvent) {
+    e.preventDefault()
     const checkFields = checkWhichFieldsAreEmpty()
     if(checkFields.fieldsAreEmpty) {
       setErrorMessage(checkFields.error)

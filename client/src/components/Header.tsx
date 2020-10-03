@@ -91,10 +91,9 @@ const Tagline = styled.p`
 const Navigator = styled.div`
   display: flex;
   justify-content: center;
+  background-color: whitesmoke;
   width: 100%;
-  border-bottom: 1px solid black;
   padding: 10px 0;
-  margin-bottom: 50px;
 `
 
 const NavigatorLink = styled.p`

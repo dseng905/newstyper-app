@@ -63,13 +63,15 @@ export async function createUserProfile(req : Request, res : Response) {
 
         //Use new user profile info to create JWT token
         const token = getSignedJwtToken(user.id)
-
         //Send token to the client
         res.status(200).json({
             success: "User profile has been successfully created.", 
             token,
             expiresIn : jwtConfig.EXPIRES_IN,
-            userId : user.id
+            userId : user.id,
+            firstName,
+            lastName,
+            email,
         })
     }
     catch(e) {
@@ -122,27 +124,48 @@ export async function getUserProfileStatistics(req : Request, res : Response) {
         const { userId } = req.user as { userId : number }
         const user = await prisma.userProfile.findOne({
             where: {id : userId}, 
-            include: {userStatistics : true}
+            include: {
+                userSettings : true,
+                articleTypingResults : true,
+            }
         })
 
         if(!user) {
             return res.send({error : "User does not exists."})
         }
-        if(user.userStatistics) {
-            return res.send(user.userStatistics)
+
+        //Get the daily goal for completed articles
+        let dailyGoal = 0
+        if(user.userSettings) {
+            dailyGoal = user.userSettings.dailyGoal!
+        } 
+        else {
+            dailyGoal = (await prisma.userSettings.create({
+                data : { userProfile : {connect : {id : userId}}}
+            })).dailyGoal!
         }
 
-        //Craete new UserStatistics entry if it does not exist.
-        const userStatistics = await prisma.userStatistics.create({
-            data : {
-                averageWpm : -1,
-                dailyGoal : 3,
-                dailyGoalArticlesCompleted : 0,
-                totalArticlesCompleted : 0,
-                userProfile : {connect : {id : userId}}
-            }
+        const totalArticlesCompleted = user.articleTypingResults.length
+
+        const averageWpm = user.articleTypingResults
+            .reduce((sum, result) => sum + (result.wpm ?? 0), 0) / totalArticlesCompleted
+
+        const dailyGoalArticlesCompleted = user.articleTypingResults
+            .filter((result) => {
+                const { completedAt } = result 
+                const today = new Date()
+                return today.getDate() === completedAt.getDate()
+                    && today.getMonth() === completedAt.getMonth()
+                    && today.getFullYear() === completedAt.getFullYear()
+            }).length
+
+        res.send({
+            userId,
+            totalArticlesCompleted,
+            averageWpm,
+            dailyGoal,
+            dailyGoalArticlesCompleted
         })
-        res.send(userStatistics)
     }
     catch(e) {
         const error = e as Error
@@ -164,7 +187,7 @@ export async function getUserProfile(req : Request, res : Response) {
                 email : true,
                 firstName : true,
                 lastName : true,
-                userStatistics : true,
+                userSettings : true,
             }
         })
 

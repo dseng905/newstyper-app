@@ -3,42 +3,62 @@ import styled from 'styled-components'
 import UserContext from './contexts/UserContext'
 import UserStats from './UserStats'
 import LinkButton from './LinkButton'
+import NewsTyperApi, { UserStatisticsResponse } from '../utils/newstyper_api'
+import typewriterImg from '../assets/typewriter.png'
+
 
 
 const UserOverview : React.FC = () => {
+  const [userStatistics, setUserStatistics] = useState<UserStatisticsResponse>({})
   const [userContext] = useContext(UserContext)
+  const [hideOverview, setHideOverview] = useState(true)
 
+  useEffect(() => {
+    (async () => {
+      const userStats = await NewsTyperApi.getUserStatistics()
+      if(userStats) setUserStatistics(userStats)
+      setHideOverview(false)
+    })()
+  }, [])
+
+  const {
+    dailyGoalArticlesCompleted,
+    dailyGoal,
+    totalArticlesCompleted,
+    averageWpm
+  } = userStatistics
+  
   return (
-    <div>
+    <UserStatisticsContainer hide={hideOverview}>
       { !userContext.signedIn
         ?(<div>
           <div style={{marginBottom: "30px"}}>
             <WelcomeText2>Welcome to NewsTyper!</WelcomeText2>
-            <WelcomeSubtext>Practice your typing skills and keep yourself informed with latest news. </WelcomeSubtext> 
+            <WelcomeSubtext>Practice your typing skills and keep yourself informed with latest news.</WelcomeSubtext> 
             <WelcomeSubtext>Sign-in or create an account to save your progress!</WelcomeSubtext>
           </div>
           <TypeNowButtons>
             <LinkButton label="Sign-in" to="/signin" />
-            <LinkButton label="Register" to="/create" />
+            <LinkButton label="Register" to="/create_account" />
           </TypeNowButtons>
         </div>)
         :(<div>
-          <WelcomeText><div>Welcome, Davin!</div></WelcomeText>
+          <WelcomeText><div>Welcome, {userContext.firstName}!</div></WelcomeText>
           <UserStatsContainer>
             <UserStats
               title="Daily Goal"
-              displayNumber={1}
-              maxDisplayNumber={3}
+              displayNumber={dailyGoalArticlesCompleted ?? 0}
+              maxDisplayNumber={dailyGoal ?? 3}
               unit="articles" 
             />
             <UserStats
-              title="Display"
-              displayNumber={15}
+              title="Total Articles"
+              displayNumber={totalArticlesCompleted ?? 0}
               unit="articles" 
             />
             <UserStats 
               title="Average WPM"
-              displayNumber={15}
+              displayNumber={averageWpm ? (averageWpm >= 0 ? Math.round(averageWpm) : "N/A") : "N/A"}
               unit="WPM"
             />
           </UserStatsContainer>
@@ -54,9 +74,23 @@ const UserOverview : React.FC = () => {
         <LinkButton label="Technology" to="/" />
         <LinkButton label="Art and Design" to="/" />
       </TypeNowButtons>
-    </div>
+    </UserStatisticsContainer>
   )
 }
+
+
+const UserStatisticsContainer = styled.div<{hide : boolean}>`
+  transition: 1s;
+  background-color: slategray;
+  background-image: ${`url(${typewriterImg})`};
+  background-size: contain;
+  background-repeat: no-repeat;
+  color: white;
+  width: 100%;
+  height: 300px;
+  padding: 50px 0;
+  opacity: ${props => props.hide ? '0' : '1'};
+`
 
 const TypeNowButtons = styled.div`
   display: flex;

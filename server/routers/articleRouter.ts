@@ -1,15 +1,16 @@
 import express from 'express'
 import * as Article from '../controllers/article'
+import passport from 'passport'
 
 const articleRouter = express.Router()
 
 articleRouter.route('/results')
-    .get(Article.getArticleTypingResults)
-    .post(Article.saveArticleTypingResults)
+    .get(passport.authenticate('jwt', {session: false}), Article.getArticleTypingResults)
+    .post(passport.authenticate('jwt', {session: false}), Article.saveArticleTypingResults)
 
 articleRouter.route('/favorites')
-    .get(Article.getFavoriteArticles)
-    .post(Article.saveArticleToFavorites)
+    .get(passport.authenticate('jwt', {session: false}), Article.getFavoriteArticles)
+    .post(passport.authenticate('jwt', {session: false}), Article.saveArticleToFavorites)
 
 export default articleRouter
 

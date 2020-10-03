@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import parseToDateString from '../utils/parse_date'
 import TypingResults from '../components/TypingResults'
+import NewsTyperApi from '../utils/newstyper_api'
 
 
 interface TestInput {
@@ -10,6 +11,7 @@ interface TestInput {
   description? : string 
   date? : Date
   paragraphs : string[]
+  articleId : string
 }
 
 const ArticleTypingPage : React.FC<TestInput> = (props) => {
@@ -133,6 +135,12 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
         setCurrentWord("")
         setInputText("")
         setHighlighted((prev) => prev + input)
+
+        NewsTyperApi.saveArticleTypingResults({
+          articleId : props.articleId,
+          wpm : calculateWPM(),
+          timeCompleted : timerSeconds
+        })
       }
       else if(endOfParagraph) {
         goToNextParagraph()

@@ -8,18 +8,19 @@ datasource db {
 }
 
 model ArticleTypingResult {
-  id            Int         @default(autoincrement()) @id
+  id            Int         @id @default(autoincrement())
   userId        Int         @default(autoincrement()) @map("user_id")
   articleId     String?     @map("article_id")
   wpm           Int?
   timeCompleted Int?        @map("time_completed")
+  completedAt   DateTime    @default(dbgenerated()) @map("completed_at")
   userProfile   UserProfile @relation(fields: [userId], references: [id])
 
   @@map("article_typing_results")
 }
 
 model SaveArticle {
-  id          Int         @default(autoincrement()) @id
+  id          Int         @id @default(autoincrement())
   userId      Int         @default(autoincrement()) @map("user_id")
   articleId   String?     @map("article_id")
   userProfile UserProfile @relation(fields: [userId], references: [id])
@@ -28,26 +29,23 @@ model SaveArticle {
 }
 
 model UserProfile {
-  id                   Int                   @default(autoincrement()) @id
+  id                   Int                   @id @default(autoincrement())
   email                String?               @unique
   password             String?
   firstName            String?               @map("first_name")
   lastName             String?               @map("last_name")
   articleTypingResults ArticleTypingResult[]
   savedArticles        SaveArticle[]
-  userStatistics       UserStatistics?
+  userSettings         UserSettings?         @relation("user_profilesTouser_settings")
 
   @@map("user_profiles")
 }
 
-model UserStatistics {
-  id                         Int         @default(autoincrement()) @id
-  userId                     Int         @default(autoincrement()) @map("user_id") @unique
-  averageWpm                 Int?        @map("average_wpm")
-  totalArticlesCompleted     Int?        @map("total_articles_completed")
-  dailyGoal                  Int?        @map("daily_goal")
-  dailyGoalArticlesCompleted Int?        @map("daily_goal_articles_completed")
-  userProfile                UserProfile @relation(fields: [userId], references: [id])
+model UserSettings {
+  id          Int         @id @default(autoincrement())
+  userId      Int         @unique @default(autoincrement()) @map("user_id")
+  dailyGoal   Int?        @default(3) @map("daily_goal")
+  userProfile UserProfile @relation("user_profilesTouser_settings", fields: [userId], references: [id])
 
-  @@map("user_statistics")
+  @@map("user_settings")
 }

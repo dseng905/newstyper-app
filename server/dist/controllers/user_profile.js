@@ -93,7 +93,10 @@ function createUserProfile(req, res) {
                         success: "User profile has been successfully created.",
                         token: token,
                         expiresIn: passport_config_1.default.EXPIRES_IN,
-                        userId: user.id
+                        userId: user.id,
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
                     });
                     return [3 /*break*/, 5];
                 case 4:
@@ -109,7 +112,7 @@ function createUserProfile(req, res) {
 exports.createUserProfile = createUserProfile;
 function signInToUserProfile(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, email, password, user, passwordCorrect, token, e_2, error;
+        var _a, email, password, user, passwordCorrect, token, userId, firstName, lastName, e_2, error;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -130,11 +133,15 @@ function signInToUserProfile(req, res) {
                         return [2 /*return*/];
                     }
                     token = getSignedJwtToken(user.id);
+                    userId = user.id, firstName = user.firstName, lastName = user.lastName;
                     res.status(200).json({
                         success: "User has been successfully signed in.",
                         token: token,
                         expiresIn: passport_config_1.default.EXPIRES_IN,
-                        userId: user.id
+                        userId: userId,
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email
                     });
                     return [3 /*break*/, 4];
                 case 3:
@@ -150,46 +157,63 @@ function signInToUserProfile(req, res) {
 exports.signInToUserProfile = signInToUserProfile;
 function getUserProfileStatistics(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var userId, user, userStatistics, e_3, error;
+        var userId, user, dailyGoal, totalArticlesCompleted, averageWpm, dailyGoalArticlesCompleted, e_3, error;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 3, , 4]);
+                    _a.trys.push([0, 5, , 6]);
                     if (!req.user) {
                         return [2 /*return*/, res.send({ error: "Failed to authenticate." })];
                     }
                     userId = req.user.userId;
                     return [4 /*yield*/, prisma.userProfile.findOne({
                             where: { id: userId },
-                            include: { userStatistics: true }
+                            include: {
+                                userSettings: true,
+                                articleTypingResults: true,
+                            }
                         })];
                 case 1:
                     user = _a.sent();
                     if (!user) {
                         return [2 /*return*/, res.send({ error: "User does not exists." })];
                     }
-                    if (user.userStatistics) {
-                        return [2 /*return*/, res.send(user.userStatistics)];
-                    }
-                    return [4 /*yield*/, prisma.userStatistics.create({
-                            data: {
-                                averageWpm: -1,
-                                dailyGoal: 3,
-                                dailyGoalArticlesCompleted: 0,
-                                totalArticlesCompleted: 0,
-                                userProfile: { connect: { id: userId } }
-                            }
-                        })];
-                case 2:
-                    userStatistics = _a.sent();
-                    res.send(userStatistics);
+                    dailyGoal = 0;
+                    if (!user.userSettings) return [3 /*break*/, 2];
+                    dailyGoal = user.userSettings.dailyGoal;
                     return [3 /*break*/, 4];
+                case 2: return [4 /*yield*/, prisma.userSettings.create({
+                        data: { userProfile: { connect: { id: userId } } }
+                    })];
                 case 3:
+                    dailyGoal = (_a.sent()).dailyGoal;
+                    _a.label = 4;
+                case 4:
+                    totalArticlesCompleted = user.articleTypingResults.length;
+                    averageWpm = user.articleTypingResults
+                        .reduce(function (sum, result) { var _a; return sum + ((_a = result.wpm) !== null && _a !== void 0 ? _a : 0); }, 0) / totalArticlesCompleted;
+                    dailyGoalArticlesCompleted = user.articleTypingResults
+                        .filter(function (result) {
+                        var completedAt = result.completedAt;
+                        var today = new Date();
+                        return today.getDate() === completedAt.getDate()
+                            && today.getMonth() === completedAt.getMonth()
+                            && today.getFullYear() === completedAt.getFullYear();
+                    }).length;
+                    res.send({
+                        userId: userId,
+                        totalArticlesCompleted: totalArticlesCompleted,
+                        averageWpm: averageWpm,
+                        dailyGoal: dailyGoal,
+                        dailyGoalArticlesCompleted: dailyGoalArticlesCompleted
+                    });
+                    return [3 /*break*/, 6];
+                case 5:
                     e_3 = _a.sent();
                     error = e_3;
                     res.send({ error: error.message });
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
             }
         });
     });
@@ -213,7 +237,7 @@ function getUserProfile(req, res) {
                                 email: true,
                                 firstName: true,
                                 lastName: true,
-                                userStatistics: true,
+                                userSettings: true,
                             }
                         })];
                 case 1:

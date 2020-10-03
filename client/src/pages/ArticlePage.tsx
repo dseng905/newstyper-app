@@ -20,6 +20,7 @@ const ArticlePage : React.FC = () => {
 
 
   const testPage = <ArticleTypingPage
+    articleId="This is a test article"
     paragraphs={["A quick brown fox jumps over the lazy"]}
     title={"Lorem Ipsum"}
   />
@@ -30,7 +31,8 @@ const ArticlePage : React.FC = () => {
       {
         !article
         ? <LoadingPage />
-        : <ArticleTypingPage 
+        : <ArticleTypingPage
+            articleId={id} 
             paragraphs={paragraphs}
             title={article.title}
             description={article.description}

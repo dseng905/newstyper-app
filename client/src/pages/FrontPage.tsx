@@ -1,21 +1,17 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import NewsCategory from '../components/NewsCategory'
 import Header from '../components/Header'
-import LinkButton from '../components/LinkButton'
-import UserStats from '../components/UserStats'
 import { NewsSection } from '../utils/fetch_news'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import UserContext from '../components/contexts/UserContext'
 import UserOverview from '../components/UserOverview'
 
 const FrontPage : React.FC = () => {
-    
   return (
     <div style={{width: "100%"}}>
-      <Header  /> 
+      <Header  />
+      <UserOverview /> 
       <FrontPageContent>
-        <UserOverview />
         <NewsCategory 
           category="Around the World"
           description="Lorem, ipsum dolor sit amet consectetur adipisicing elit."
@@ -47,16 +43,9 @@ const FrontPage : React.FC = () => {
 }
 
 
-
-
 const FrontPageContent = styled.div`
   box-sizing: border-box;
-  padding: 0 50px;
   width: 100%;
 `
-
-
-
-
 
 export default FrontPage

@@ -24,11 +24,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var Article = __importStar(require("../controllers/article"));
+var passport_1 = __importDefault(require("passport"));
 var articleRouter = express_1.default.Router();
 articleRouter.route('/results')
-    .get(Article.getArticleTypingResults)
-    .post(Article.saveArticleTypingResults);
+    .get(passport_1.default.authenticate('jwt', { session: false }), Article.getArticleTypingResults)
+    .post(passport_1.default.authenticate('jwt', { session: false }), Article.saveArticleTypingResults);
 articleRouter.route('/favorites')
-    .get(Article.getFavoriteArticles)
-    .post(Article.saveArticleToFavorites);
+    .get(passport_1.default.authenticate('jwt', { session: false }), Article.getFavoriteArticles)
+    .post(passport_1.default.authenticate('jwt', { session: false }), Article.saveArticleToFavorites);
 exports.default = articleRouter;

@@ -13,7 +13,8 @@ CREATE TABLE article_typing_results(
     user_id SERIAL REFERENCES user_profiles(id),
     article_id TEXT,
     wpm INT,
-    time_completed INT
+    time_completed INT,
+    completed_at DATE NOT NULL DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE saved_articles(
@@ -29,4 +30,10 @@ CREATE TABLE user_statistics(
     total_articles_completed INT,
     daily_goal INT,
     daily_goal_articles_completed INT
+);
+
+CREATE TABLE user_settings(
+    id SERIAL PRIMARY KEY,
+    user_id SERIAL REFERENCES user_profiles(id) UNIQUE,
+    daily_goal INT DEFAULT 3,
 );

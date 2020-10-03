@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,18 +48,71 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFavoriteArticles = exports.saveArticleToFavorites = exports.getArticleTypingResults = exports.saveArticleTypingResults = void 0;
+var client_1 = require("@prisma/client");
+var prisma = new client_1.PrismaClient();
 function saveArticleTypingResults(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/];
+        var id, _a, articleId, timeCompleted, wpm, savedResults, e_1, error;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    if (!req.user) {
+                        return [2 /*return*/, res.send({ error: "Failed to authenticate." })];
+                    }
+                    id = req.user.userId;
+                    _a = req.body, articleId = _a.articleId, timeCompleted = _a.timeCompleted, wpm = _a.wpm;
+                    return [4 /*yield*/, prisma.articleTypingResult.create({
+                            data: {
+                                articleId: articleId,
+                                timeCompleted: timeCompleted,
+                                wpm: wpm,
+                                userProfile: { connect: { id: id } }
+                            }
+                        })];
+                case 1:
+                    savedResults = _b.sent();
+                    res.send(__assign(__assign({}, savedResults), { success: "Article typing results successfully saved" }));
+                    return [3 /*break*/, 3];
+                case 2:
+                    e_1 = _b.sent();
+                    error = e_1;
+                    res.send({ error: error.message });
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
         });
     });
 }
 exports.saveArticleTypingResults = saveArticleTypingResults;
 function getArticleTypingResults(req, res) {
     return __awaiter(this, void 0, void 0, function () {
+        var id, articleTypingResults, e_2, error;
         return __generator(this, function (_a) {
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    if (!req.user) {
+                        return [2 /*return*/, res.send({ error: "Failed to authenticate" })];
+                    }
+                    id = req.body.userId;
+                    return [4 /*yield*/, prisma.articleTypingResult.findMany({ where: { id: id } })];
+                case 1:
+                    articleTypingResults = _a.sent();
+                    res.send({
+                        articleTypingResults: articleTypingResults,
+                        success: articleTypingResults.length === 0
+                            ? "No results were found for this user."
+                            : "Article results has been successfully retrieved."
+                    });
+                    return [3 /*break*/, 3];
+                case 2:
+                    e_2 = _a.sent();
+                    error = e_2;
+                    res.send({ error: error.message });
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
         });
     });
 }

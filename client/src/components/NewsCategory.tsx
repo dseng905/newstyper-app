@@ -10,6 +10,8 @@ interface NewsCategoryInfo {
     category : string
     description : string
     section : NewsSection
+    fontColor? : string
+    backgroundColor? : string
 }
   
 const NewsCategory : React.FC<NewsCategoryInfo> = (props) => {
@@ -25,7 +27,7 @@ const NewsCategory : React.FC<NewsCategoryInfo> = (props) => {
 
   const isLoading = (articles.length === 0)
   return (
-    <NewsCategoryContainer>
+    <NewsCategoryContainer backgroundColor={props.backgroundColor} fontColor={props.fontColor}>
       <NewsCategoryHeader>
         <NewsCategoryName>{props.category}</NewsCategoryName>
         <NewsCategoryDescription>{props.description}</NewsCategoryDescription>
@@ -59,9 +61,12 @@ const Placeholder = styled.div`
   height: 270px;
 `
 
-const NewsCategoryContainer = styled.div`
+const NewsCategoryContainer = styled.div<{backgroundColor? : string, fontColor? : string}>`
   width: 100%;
-  margin-bottom: 50px;
+  padding: 25px 50px;
+  box-sizing: border-box;
+  background-color: ${prop => prop.backgroundColor ?? "whitesmoke"};
+  color: ${prop => prop.fontColor ?? "black"};
 `
 
 const NewsCategoryList = styled.div`
@@ -79,6 +84,7 @@ const NewsCategoryHeader = styled.div`
 `
 
 const NewsCategoryName = styled.p`
+  font-weight: bold;
   margin: 0;
   font-size: 35px;
 `

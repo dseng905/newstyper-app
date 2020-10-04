@@ -91,7 +91,8 @@ abstract class NewsTyperApi {
 
     static async getUserStatistics() : Promise<UserStatisticsResponse | undefined>{
         const token = Cookies.get('token')
-        const res = await fetch(URI + '/statistics', {
+        const timezone = (new Date()).getTimezoneOffset()
+        const res = await fetch(URI + '/statistics?timezone=' + timezone, {
             method: "GET",
             credentials: 'include',
             headers: {
@@ -106,12 +107,12 @@ abstract class NewsTyperApi {
 
     static async getUserProfile() : Promise<UserProfileResponse | undefined> {
         const token = Cookies.get('token')
-        const res = await fetch(URI + '/', {
+        const res = await fetch(URI, {
             method: "GET",
             credentials: 'include',
             headers: {
                 'Authorization' : 'Bearer ' + token ?? '',
-                'Content-Type' : 'application/json'
+                ...postHeaders
             }
         })
 
@@ -128,8 +129,8 @@ abstract class NewsTyperApi {
             credentials : 'include',
             headers : {
                 'Authorization' : 'Bearer ' + token ?? '',
-                'Content-Type' : 'application/json'
-            }
+            },
+            
         })
 
         if(res.status === 401) return undefined

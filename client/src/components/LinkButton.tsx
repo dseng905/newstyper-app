@@ -22,7 +22,7 @@ const ButtonContainer = styled.div`
   font-family: inherit;
   font-size: 17px;
   padding: 10px;
-  margin: 0 10px;
+  margin: 10px 10px;
   background-color: black;
   transition: 0.2s linear;
   text-align: center;

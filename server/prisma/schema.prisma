@@ -8,19 +8,19 @@ datasource db {
 }
 
 model ArticleTypingResult {
-  id            Int         @id @default(autoincrement())
+  id            Int         @default(autoincrement()) @id
   userId        Int         @default(autoincrement()) @map("user_id")
   articleId     String?     @map("article_id")
   wpm           Int?
   timeCompleted Int?        @map("time_completed")
-  completedAt   DateTime    @default(dbgenerated()) @map("completed_at")
+  completedAt   DateTime?   @default(dbgenerated()) @map("completed_at")
   userProfile   UserProfile @relation(fields: [userId], references: [id])
 
   @@map("article_typing_results")
 }
 
 model SaveArticle {
-  id          Int         @id @default(autoincrement())
+  id          Int         @default(autoincrement()) @id
   userId      Int         @default(autoincrement()) @map("user_id")
   articleId   String?     @map("article_id")
   userProfile UserProfile @relation(fields: [userId], references: [id])
@@ -29,7 +29,7 @@ model SaveArticle {
 }
 
 model UserProfile {
-  id                   Int                   @id @default(autoincrement())
+  id                   Int                   @default(autoincrement()) @id
   email                String?               @unique
   password             String?
   firstName            String?               @map("first_name")
@@ -42,8 +42,8 @@ model UserProfile {
 }
 
 model UserSettings {
-  id          Int         @id @default(autoincrement())
-  userId      Int         @unique @default(autoincrement()) @map("user_id")
+  id          Int         @default(autoincrement()) @id
+  userId      Int         @default(autoincrement()) @map("user_id") @unique
   dailyGoal   Int?        @default(3) @map("daily_goal")
   userProfile UserProfile @relation("user_profilesTouser_settings", fields: [userId], references: [id])
 

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import validator from 'validator'
 import jwtConfig from '../auth/passport_config'
+import { AuthUser } from '../auth/auth'
 
 
 const prisma = new PrismaClient()
@@ -121,7 +122,8 @@ export async function getUserProfileStatistics(req : Request, res : Response) {
             return res.send({error : "Failed to authenticate."})
         }
 
-        const { userId } = req.user as { userId : number }
+        const { userId } = req.user as AuthUser
+
         const user = await prisma.userProfile.findOne({
             where: {id : userId}, 
             include: {
@@ -150,15 +152,18 @@ export async function getUserProfileStatistics(req : Request, res : Response) {
         const averageWpm = user.articleTypingResults
             .reduce((sum, result) => sum + (result.wpm ?? 0), 0) / totalArticlesCompleted
 
+        const timezone = Number(req.query!.timezone as string)
+        const timezoneOffset = (isNaN(timezone) ? 0 : timezone) * 60000
+
         const dailyGoalArticlesCompleted = user.articleTypingResults
             .filter((result) => {
-                const { completedAt } = result 
-                const today = new Date()
+                const completedAt = new Date(result.completedAt!.getTime() - timezoneOffset)
+                const today = new Date(Date.now() - timezoneOffset)
                 return today.getDate() === completedAt.getDate()
                     && today.getMonth() === completedAt.getMonth()
                     && today.getFullYear() === completedAt.getFullYear()
             }).length
-
+        
         res.send({
             userId,
             totalArticlesCompleted,

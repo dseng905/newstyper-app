@@ -48,7 +48,7 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
 
   const articleDate = parseToDateString(props.date ?? Date.now())
   return (
-    <div style={{ margin: "0 25%", boxSizing: "border-box"}}>
+    <PageContainer>
       <h1>{props.title}</h1>
       <h3>{articleDate}</h3>
       <ImageContainer>
@@ -97,7 +97,7 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
         />
       }
       <div style={{height: '100vh'}}></div>
-    </div>
+    </PageContainer>
   )
 
 
@@ -225,6 +225,14 @@ const ArticleTypingPage : React.FC<TestInput> = (props) => {
   -NextParagraph,
   -PreviousParagraph,
 */
+
+const PageContainer = styled.div`
+  box-sizing: border-box;
+  margin: 0 30px;
+  @media (min-width : 800px) {
+    width: 800px;
+  }
+`
 
 const Text = styled.span`
   font-size: 25px;

@@ -157,7 +157,7 @@ function signInToUserProfile(req, res) {
 exports.signInToUserProfile = signInToUserProfile;
 function getUserProfileStatistics(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var userId, user, dailyGoal, totalArticlesCompleted, averageWpm, dailyGoalArticlesCompleted, e_3, error;
+        var userId, user, dailyGoal, totalArticlesCompleted, averageWpm, timezone, timezoneOffset_1, dailyGoalArticlesCompleted, e_3, error;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -192,10 +192,12 @@ function getUserProfileStatistics(req, res) {
                     totalArticlesCompleted = user.articleTypingResults.length;
                     averageWpm = user.articleTypingResults
                         .reduce(function (sum, result) { var _a; return sum + ((_a = result.wpm) !== null && _a !== void 0 ? _a : 0); }, 0) / totalArticlesCompleted;
+                    timezone = Number(req.query.timezone);
+                    timezoneOffset_1 = (isNaN(timezone) ? 0 : timezone) * 60000;
                     dailyGoalArticlesCompleted = user.articleTypingResults
                         .filter(function (result) {
-                        var completedAt = result.completedAt;
-                        var today = new Date();
+                        var completedAt = new Date(result.completedAt.getTime() - timezoneOffset_1);
+                        var today = new Date(Date.now() - timezoneOffset_1);
                         return today.getDate() === completedAt.getDate()
                             && today.getMonth() === completedAt.getMonth()
                             && today.getFullYear() === completedAt.getFullYear();

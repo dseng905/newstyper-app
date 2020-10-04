@@ -16,6 +16,7 @@ const UserOverview : React.FC = () => {
   useEffect(() => {
     (async () => {
       const userStats = await NewsTyperApi.getUserStatistics()
+      console.log(userStats)
       if(userStats) setUserStatistics(userStats)
       setHideOverview(false)
     })()
@@ -83,13 +84,21 @@ const UserStatisticsContainer = styled.div<{hide : boolean}>`
   transition: 1s;
   background-color: slategray;
   background-image: ${`url(${typewriterImg})`};
-  background-size: contain;
   background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: 100px;
   color: white;
   width: 100%;
-  height: 300px;
   padding: 50px 0;
   opacity: ${props => props.hide ? '0' : '1'};
+
+  @media (min-width: 800px) {
+    height: 300px;
+    background-position: left;
+    background-size: contain;
+  }
+
+  
 `
 
 const TypeNowButtons = styled.div`
@@ -97,6 +106,8 @@ const TypeNowButtons = styled.div`
   justify-content: center;
   align-items: baseline;
   margin-bottom: 50px;
+  flex-wrap: wrap;
+
 `
 
 const WelcomeText = styled.div`
@@ -123,6 +134,7 @@ const UserStatsContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
+  flex-wrap: wrap;
 `
 
 

@@ -51,6 +51,12 @@ export interface ArticleTypingResultsResponse {
     articleTypingResults? : ArticleTypingResult[]
     success? : string
 }
+
+export interface SavedArticle {
+    id? : number
+    userId? : number
+    articleId? : string
+}
   
 
 const postHeaders = {
@@ -152,6 +158,46 @@ abstract class NewsTyperApi {
 
         if(res.status === 401) return
         console.log(await res.json())
+    }
+
+    static async saveArticleToFavorites(articleId : string) {
+        const token = Cookies.get('token')
+        await fetch(URI + "/article/favorites", {
+            method: "POST",
+            credentials : "include",
+            body : JSON.stringify({articleId}),
+            headers : {
+               ...postHeaders,
+               'Authorization' : 'Bearer ' + token ?? "" 
+            }
+        })
+    }
+
+    static async getFavoriteArticles() : Promise<SavedArticle[] | undefined> {
+        const token = Cookies.get('token')
+        const res = await fetch(URI + "/article/favorites", {
+            method : "GET",
+            credentials : "include",
+            headers : {
+                'Authorization' : 'Bearer ' + token ?? "",
+            },
+        })
+
+        if(res.status === 401) return undefined
+        return await res.json()
+    }
+
+    static async deleteFavoriteArticle(articleId : string) : Promise<void> {
+        const token = Cookies.get('token')
+        await fetch(URI + "/article/favorites", {
+            method: "DELETE",
+            credentials : "include",
+            body : JSON.stringify({articleId}),
+            headers : {
+                ...postHeaders,
+                'Authorization' : 'Bearer ' + token ?? ""
+            }
+        })
     }
 }
 

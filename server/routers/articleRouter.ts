@@ -11,6 +11,7 @@ articleRouter.route('/results')
 articleRouter.route('/favorites')
     .get(passport.authenticate('jwt', {session: false}), Article.getFavoriteArticles)
     .post(passport.authenticate('jwt', {session: false}), Article.saveArticleToFavorites)
+    .delete(passport.authenticate('jwt', {session : false}), Article.deleteArticleFromFavorites)
 
 export default articleRouter
 

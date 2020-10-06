@@ -60,9 +60,77 @@ export async function getArticleTypingResults(req : Request, res : Response) {
 }
 
 export async function saveArticleToFavorites(req : Request, res : Response) {
-    // TODO: implement code to save article to user's favorites
+    try {
+        const { articleId } = req.body as {articleId? : string}
+        const { userId } = req.user as { userId? : number }
+
+        if(!articleId || !userId) {
+            return res.send({error : "Article id not found"})
+        } 
+        else {
+            await prisma.saveArticle.create({
+                data : { 
+                    articleId,
+                    userProfile : {
+                        connect : {id : userId}
+                    }
+                },   
+            })
+
+            return res.send({
+                success : "Article has been successfully saved to user profile",
+                articleId
+            })
+        }
+    }
+    catch(e) {
+        const error = e as Error
+        res.send({error: error.message})
+    }
+}
+
+export async function deleteArticleFromFavorites(req : Request, res : Response) {
+    try {
+        const { articleId } = req.body as {articleId? : string}
+        const { userId } = req.user as {userId? : number}
+
+        if(!articleId || !userId) {
+            return res.send({error: "Article id or userId could not be found in request body."})
+        }
+
+        await prisma.saveArticle.deleteMany({
+            where: { articleId, userId }
+        })
+
+        res.send({
+            success : "Article has been successfully deleted."
+        })
+    }
+    catch(e) {
+        const error = e as Error
+        res.send({error : error.message})
+    }
 }
 
 export async function getFavoriteArticles(req : Request, res : Response) {
-    // TODO: implement code to retrieve favorite articles from the database
+    try {
+        const { userId }  = req.user as { userId? : number}
+
+        if(!userId) {
+            return res.send({error : "User Id not found in request body."})
+        }
+
+        const savedArticles = await prisma.saveArticle.findMany({
+            where: { userId } 
+        })
+
+        res.send({
+            savedArticles,
+            success : "All user's saved articles have retrieved."
+        })
+    }
+    catch(e) {
+        const error = e as Error
+        res.send({error : error.message})
+    }
 }
